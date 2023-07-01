@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
 // components
+import Notification from '../components/Notification/Notification.vue'
 import Button from '../components/Button/Button.vue'
+
+// style
+import { StyledTable, StyledTableHead, StyledTableData, StyledTab, StyledTabItem, StyledNavbar } from '../App.style'
 
 // store
 import { useCarsStore } from '../stores/cars.store'
@@ -22,8 +27,20 @@ const addBrands = () => {
   brandStores.addBrand(payload)
 }
 
-const test = () => {
-  console.log('masuk ajka njubng');
+const addNewCar = () => {
+  const payload = {
+    id: 3,
+    name: 'Calya',
+    brand: {
+      id: 1,
+      name: 'Toyota'
+    },
+    year: 2025,
+    note: '',
+    machineCapacity: '2000 cc',
+  }
+
+  carStores.addCar(payload)
 }
 
 const testInput = ref('')
@@ -31,22 +48,49 @@ const testInput = ref('')
 </script>
 
 <template>
-  <div class="button-flex">
-    <button @click="addBrands">Add new brands</button>
-    <router-link to="/brands">Go to brands page </router-link>
+  <Notification v-if="true" message="masuk coy" color="danger" />
 
-  </div>
-  <Button @click="test">MASuk njing</Button>
-  <h2> Cars Page </h2>
-  <p>data cars</p>
-  <p>{{ carStores.dataCars }}</p>
-  <p>data brands</p>
-  <p>{{ brandStores.dataBrands }}</p>
+  <StyledNavbar>
+    <StyledTab>
+      <StyledTabItem :is-selected="true" @click="$router.push('/')">
+        Cars
+      </StyledTabItem>
+      <StyledTabItem @click="$router.push('/brands')">
+        Brands
+      </StyledTabItem>
+    </StyledTab>
+
+    <Button @click="addNewCar" icon="add"> Add New Car </Button>
+  </StyledNavbar>
+
+
+  <StyledTable style="width: 100%">
+    <tr>
+      <StyledTableHead>Id</StyledTableHead>
+      <StyledTableHead>Name</StyledTableHead>
+      <StyledTableHead>Brand</StyledTableHead>
+      <StyledTableHead>Year</StyledTableHead>
+      <StyledTableHead>Machine Capacity</StyledTableHead>
+      <StyledTableHead>Note</StyledTableHead>
+      <StyledTableHead></StyledTableHead>
+      <StyledTableHead></StyledTableHead>
+    </tr>
+    <tr v-for="car in carStores.dataCars">
+      <StyledTableData>{{ car.id }}</StyledTableData>
+      <StyledTableData>{{ car.name }}</StyledTableData>
+      <StyledTableData>{{ car.brand.name}}</StyledTableData>
+      <StyledTableData>{{ car.year }}</StyledTableData>
+      <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
+      <StyledTableData>{{ car.note }}</StyledTableData>
+      <StyledTableData>
+        <Button icon="edit"> Edit </Button>
+      </StyledTableData>
+      <StyledTableData>
+        <Button variant="danger" icon="delete"> Delete </Button>
+      </StyledTableData>
+    </tr>
+  </StyledTable>
 </template>
 
 <style scoped>
-.button-flex {
-  display: flex;
-}
-
 </style>

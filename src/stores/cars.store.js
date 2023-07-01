@@ -15,7 +15,8 @@ export const useCarsStore = defineStore('cars', () => {
         name: 'toyota'
       },
       machineCapacity: '1200',
-      note: 'asu'
+      note: 'asu',
+      year: '2024'
     },
     {
       id: 1,
@@ -25,7 +26,8 @@ export const useCarsStore = defineStore('cars', () => {
         name: 'toyota'
       },
       machineCapacity: '1200',
-      note: 'asu'
+      note: 'asu',
+      year: '2024'
     },
     {
       id: 1,
@@ -35,7 +37,8 @@ export const useCarsStore = defineStore('cars', () => {
         name: 'toyota'
       },
       machineCapacity: '1200',
-      note: 'asu'
+      note: 'asu',
+      year: '2024'
     }
   ])
 
