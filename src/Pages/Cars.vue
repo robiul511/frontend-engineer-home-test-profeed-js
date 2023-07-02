@@ -47,25 +47,33 @@ const notification = reactive({
 const isOpenForm = ref(false)
 const validation = () => {
   const __form = get(form)
-  let result = true
 
   if (!__form.data.id) {
     notification.isOpen = true
     notification.message = 'id is required'
-    result = false
+    setTimeout(() => {
+      notification.isOpen = false
+    }, 3000)
+    
+    return false
   } else if (!__form.data.name) {
     notification.isOpen = true
     notification.message = 'name can not be null'
-    result = false
-  }else if (!__form.data.machineCapacity) {
+
+    setTimeout(() => {
+      notification.isOpen = false
+    }, 3000)
+    
+    return false
+  } else if (!__form.data.machineCapacity) {
     notification.isOpen = true
     notification.message = 'machine capacity can not be null'
-    result = false
+    setTimeout(() => {
+      notification.isOpen = false
+    }, 3000)
+    
+    return false
   }
-  setTimeout(() => {
-    notification.isOpen = false
-  }, 3000)
-  
   return true
 }
 const save = () => {
@@ -86,10 +94,7 @@ const save = () => {
       notification.isOpen = true
       notification.message = 'id must be unique'
     }
-    
-    
   }
-  
 }
 
 const deleteCar = (_id) => {
@@ -153,7 +158,7 @@ const deleteCar = (_id) => {
       <tr v-for="car in carStores.dataCars">
         <StyledTableData>{{ car.id }}</StyledTableData>
         <StyledTableData>{{ car.name }}</StyledTableData>
-        <StyledTableData>{{ car.brand.name}}</StyledTableData>
+        <StyledTableData>{{ car.brand}}</StyledTableData>
         <StyledTableData>{{ car.year }}</StyledTableData>
         <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
         <StyledTableData>{{ car.note }}</StyledTableData>
