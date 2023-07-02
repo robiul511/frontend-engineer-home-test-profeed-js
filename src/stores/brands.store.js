@@ -11,14 +11,6 @@ export const useBrandsStore = defineStore('brands', () => {
       id: 1,
       name: 'kijang inova',
     },
-    {
-      id: 1,
-      name: 'kijang inova',
-    },
-    {
-      id: 1,
-      name: 'kijang inova',
-    }
   ])
 
   const addBrand = (_brand) => {

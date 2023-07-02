@@ -1,13 +1,13 @@
 <script setup>
-  import { StyledInput, StyledLabelInput } from './Input.style';
-  
+  import { StyledTextArea, StyledLabelTextArea } from './TextArea.style';
+
   defineProps(['modelValue', 'label'])
   defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <StyledLabelInput>{{ label }}</StyledLabelInput>
-  <StyledInput
+  <StyledLabelTextArea>{{ label }}</StyledLabelTextArea>
+  <StyledTextArea
     :value="modelValue"
     @input="$emit('update:modelValue', $event.target.value)"
   />

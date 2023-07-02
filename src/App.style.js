@@ -51,4 +51,29 @@ const StyledTabItem = styled('div', tabItemProps)`
   ${props => props.isSelected ? 'border-bottom: 2px ridge #6657F5' : ''}
 `
 
-export { StyledTable, StyledTableHead, StyledTableData, StyledTab, StyledTabItem, StyledNavbar }
+const StyledForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 320px;
+  margin: auto;
+  padding: 1rem
+`
+
+const StyledButtonForm = styled.div`
+  display: flex;
+  justify-content: flex-end; 
+  max-width: 320px;
+  padding: 0.5rem 0rem 0rem 0rem
+  margin: auto;
+`
+
+export {
+  StyledTable,
+  StyledTableHead,
+  StyledTableData,
+  StyledTab,
+  StyledTabItem,
+  StyledNavbar,
+  StyledForm,
+  StyledButtonForm
+}

@@ -18,28 +18,6 @@ export const useCarsStore = defineStore('cars', () => {
       note: 'asu',
       year: '2024'
     },
-    {
-      id: 1,
-      name: 'kijang inova',
-      brand: {
-        id: 1,
-        name: 'toyota'
-      },
-      machineCapacity: '1200',
-      note: 'asu',
-      year: '2024'
-    },
-    {
-      id: 1,
-      name: 'kijang inova',
-      brand: {
-        id: 1,
-        name: 'toyota'
-      },
-      machineCapacity: '1200',
-      note: 'asu',
-      year: '2024'
-    }
   ])
 
   const addCar = (_cars) => {
@@ -58,7 +36,9 @@ export const useCarsStore = defineStore('cars', () => {
 
   const deleteCar = (id) => {
     console.log(id);
-    
+    const __cars = get(dataCars)
+    const filter = __cars.filter(e => e.id !== id)
+    set(dataCars, filter)
   }
 
 

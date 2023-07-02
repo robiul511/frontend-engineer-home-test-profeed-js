@@ -1,95 +1,171 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import { get, set } from '@vueuse/core';
 
 // components
 import Notification from '../components/Notification/Notification.vue'
 import Button from '../components/Button/Button.vue'
+import Input from '../components/Input/Input.vue'
+import Select from '../components/Select/Select.vue'
+import TextArea from '../components/TextArea/TextArea.vue'
 
 // style
-import { StyledTable, StyledTableHead, StyledTableData, StyledTab, StyledTabItem, StyledNavbar } from '../App.style'
+import {
+  StyledTable,
+  StyledTableHead,
+  StyledTableData,
+  StyledTab,
+  StyledTabItem,
+  StyledNavbar,
+  StyledForm,
+  StyledButtonForm,
+} from '../App.style'
 
 // store
 import { useCarsStore } from '../stores/cars.store'
 import { useBrandsStore } from '../stores/brands.store'
 
 const brandStores = useBrandsStore()
-
 const carStores = useCarsStore()
 
-console.log(carStores);
-
-const addBrands = () => {
-  const payload = {
-    id: 2,
-    name: 'honda'
+const form = reactive({
+  idSelected: 0,
+  data: {
+    id: null,
+    name: '',
+    brand: null,
+    machineCapacity: '',
+    note: ''
   }
+})
 
-  brandStores.addBrand(payload)
+const notification = reactive({
+  isOpen: false,
+  message: ''
+})
+
+const isOpenForm = ref(false)
+const validation = () => {
+  const __form = get(form)
+  let result = true
+
+  if (!__form.data.id) {
+    notification.isOpen = true
+    notification.message = 'id is required'
+    result = false
+  } else if (!__form.data.name) {
+    notification.isOpen = true
+    notification.message = 'name can not be null'
+    result = false
+  }else if (!__form.data.machineCapacity) {
+    notification.isOpen = true
+    notification.message = 'machine capacity can not be null'
+    result = false
+  }
+  setTimeout(() => {
+    notification.isOpen = false
+  }, 3000)
+  
+  return true
+}
+const save = () => {
+  console.log(form);
+  if (validation()) {
+    const __form = get(form)
+    const { data } = form
+    console.log(__form, 'ini payload');
+    const dataCarsStore = get(carStores.dataCars)
+    console.log(dataCarsStore);
+    const hasSameId = dataCarsStore.some(e => Number(e.id) === Number(data.id))
+    console.log(hasSameId, 'has shame id');
+
+    if (!hasSameId) {
+      carStores.addCar(data)
+      set(isOpenForm, false)
+    } else {
+      notification.isOpen = true
+      notification.message = 'id must be unique'
+    }
+    
+    
+  }
+  
 }
 
-const addNewCar = () => {
-  const payload = {
-    id: 3,
-    name: 'Calya',
-    brand: {
-      id: 1,
-      name: 'Toyota'
-    },
-    year: 2025,
-    note: '',
-    machineCapacity: '2000 cc',
-  }
-
-  carStores.addCar(payload)
+const deleteCar = (_id) => {
+  carStores.deleteCar(_id)
 }
-
-const testInput = ref('')
 
 </script>
 
 <template>
-  <Notification v-if="true" message="masuk coy" color="danger" />
+  <Notification v-if="notification.isOpen" :message="notification.message" color="danger" />
 
-  <StyledNavbar>
-    <StyledTab>
-      <StyledTabItem :is-selected="true" @click="$router.push('/')">
-        Cars
-      </StyledTabItem>
-      <StyledTabItem @click="$router.push('/brands')">
-        Brands
-      </StyledTabItem>
-    </StyledTab>
+  <div v-if="isOpenForm">
+    <StyledForm>
+      <Input v-model="form.data.id" label="Id" type="number"/>
+      <Input v-model="form.data.name" label="Name" />
 
-    <Button @click="addNewCar" icon="add"> Add New Car </Button>
-  </StyledNavbar>
+      <Select v-model="form.data.brand" label="Brands">
+        <option
+          v-for="(brand, index) in brandStores.dataBrands"
+          :key="index"
+          :value="brand.id"
+        >
+          {{ brand.name }}
+        </option>
+      </Select>
 
+      <Input v-model="form.data.machineCapacity" label="Machine capacity" />
 
-  <StyledTable style="width: 100%">
-    <tr>
-      <StyledTableHead>Id</StyledTableHead>
-      <StyledTableHead>Name</StyledTableHead>
-      <StyledTableHead>Brand</StyledTableHead>
-      <StyledTableHead>Year</StyledTableHead>
-      <StyledTableHead>Machine Capacity</StyledTableHead>
-      <StyledTableHead>Note</StyledTableHead>
-      <StyledTableHead></StyledTableHead>
-      <StyledTableHead></StyledTableHead>
-    </tr>
-    <tr v-for="car in carStores.dataCars">
-      <StyledTableData>{{ car.id }}</StyledTableData>
-      <StyledTableData>{{ car.name }}</StyledTableData>
-      <StyledTableData>{{ car.brand.name}}</StyledTableData>
-      <StyledTableData>{{ car.year }}</StyledTableData>
-      <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
-      <StyledTableData>{{ car.note }}</StyledTableData>
-      <StyledTableData>
-        <Button icon="edit"> Edit </Button>
-      </StyledTableData>
-      <StyledTableData>
-        <Button variant="danger" icon="delete"> Delete </Button>
-      </StyledTableData>
-    </tr>
-  </StyledTable>
+      <TextArea v-model="form.data.note" label="Note" />
+    </StyledForm>
+    <StyledButtonForm>
+      <Button @click="save">Save</Button>
+    </StyledButtonForm>
+  </div>
+
+  <div v-else>
+    <StyledNavbar>
+      <StyledTab>
+        <StyledTabItem :is-selected="true" @click="$router.push('/')">
+          Cars
+        </StyledTabItem>
+        <StyledTabItem @click="$router.push('/brands')">
+          Brands
+        </StyledTabItem>
+      </StyledTab>
+
+      <Button @click="isOpenForm= true " icon="add"> Add New Car </Button>
+    </StyledNavbar>
+
+    <StyledTable style="width: 100%">
+      <tr>
+        <StyledTableHead>Id</StyledTableHead>
+        <StyledTableHead>Name</StyledTableHead>
+        <StyledTableHead>Brand</StyledTableHead>
+        <StyledTableHead>Year</StyledTableHead>
+        <StyledTableHead>Machine Capacity</StyledTableHead>
+        <StyledTableHead>Note</StyledTableHead>
+        <StyledTableHead></StyledTableHead>
+        <StyledTableHead></StyledTableHead>
+      </tr>
+      <tr v-for="car in carStores.dataCars">
+        <StyledTableData>{{ car.id }}</StyledTableData>
+        <StyledTableData>{{ car.name }}</StyledTableData>
+        <StyledTableData>{{ car.brand.name}}</StyledTableData>
+        <StyledTableData>{{ car.year }}</StyledTableData>
+        <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
+        <StyledTableData>{{ car.note }}</StyledTableData>
+        <StyledTableData>
+          <Button icon="edit"> Edit </Button>
+        </StyledTableData>
+        <StyledTableData>
+          <Button variant="danger" icon="delete" @click="deleteCar(car.id)"> Delete </Button>
+        </StyledTableData>
+      </tr>
+    </StyledTable>
+  </div>
 </template>
 
 <style scoped>

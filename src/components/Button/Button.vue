@@ -37,7 +37,7 @@
         ></path>
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.25 19.25H13.75"></path>
       </svg>
-      <svg v-else width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <svg v-else-if="$props.icon === 'add'" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path
           stroke="currentColor"
           stroke-linecap="round"
