@@ -33,9 +33,10 @@ const form = reactive({
   data: {
     id: null,
     name: '',
-    brand: null,
+    brand: 1,
     machineCapacity: '',
-    note: ''
+    note: '',
+    year: '',
   }
 })
 
@@ -45,6 +46,33 @@ const notification = reactive({
 })
 
 const isOpenForm = ref(false)
+const onFormClose = () => {
+  form.idSelected = 0
+  form.data = {
+    id: null,
+    name: '',
+    brand: 1,
+    machineCapacity: '',
+    note: '',
+    year: '',
+  }
+  set(isOpenForm, false)
+}
+const onClickEdit = (data) => {
+  const { id, name, brand, machineCapacity, note, year } = data
+
+  form.idSelected = id
+  form.data = {
+    id,
+    name,
+    brand,
+    machineCapacity,
+    note,
+    year,
+  }
+
+  set(isOpenForm, true)
+}
 const validation = () => {
   const __form = get(form)
 
@@ -77,22 +105,41 @@ const validation = () => {
   return true
 }
 const save = () => {
-  console.log(form);
   if (validation()) {
-    const __form = get(form)
-    const { data } = form
-    console.log(__form, 'ini payload');
+    const { data, idSelected } = form
+    console.log(idSelected, 'id selected');
+    
     const dataCarsStore = get(carStores.dataCars)
-    console.log(dataCarsStore);
-    const hasSameId = dataCarsStore.some(e => Number(e.id) === Number(data.id))
-    console.log(hasSameId, 'has shame id');
 
-    if (!hasSameId) {
-      carStores.addCar(data)
-      set(isOpenForm, false)
+    if (idSelected) {
+      const filter = dataCarsStore.filter(car => car.id !== idSelected)
+      const hasSameId = filter.some(e => Number(e.id) === Number(data.id))
+      
+      if (!hasSameId) {
+        carStores.editCar(data, idSelected)
+        onFormClose()
+
+      } else {
+        notification.isOpen = true
+        notification.message = 'id must be unique'
+        setTimeout(() => {
+          notification.isOpen = false
+        }, 3000)
+      }
+
     } else {
-      notification.isOpen = true
-      notification.message = 'id must be unique'
+      const hasSameId = dataCarsStore.some(e => Number(e.id) === Number(data.id))
+      if (!hasSameId) {
+        carStores.addCar(data)
+        onFormClose()
+        
+      } else {
+        notification.isOpen = true
+        notification.message = 'id must be unique'
+        setTimeout(() => {
+          notification.isOpen = false
+        }, 3000)
+      }
     }
   }
 }
@@ -108,6 +155,7 @@ const deleteCar = (_id) => {
 
   <div v-if="isOpenForm">
     <StyledForm>
+      <p>{{ form.idSelected ? 'Edit Car' : 'Add new Car' }}</p>
       <Input v-model="form.data.id" label="Id" type="number"/>
       <Input v-model="form.data.name" label="Name" />
 
@@ -122,6 +170,7 @@ const deleteCar = (_id) => {
       </Select>
 
       <Input v-model="form.data.machineCapacity" label="Machine capacity" />
+      <Input v-model="form.data.year" label="Year" />
 
       <TextArea v-model="form.data.note" label="Note" />
     </StyledForm>
@@ -163,7 +212,7 @@ const deleteCar = (_id) => {
         <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
         <StyledTableData>{{ car.note }}</StyledTableData>
         <StyledTableData>
-          <Button icon="edit"> Edit </Button>
+          <Button icon="edit" @click="onClickEdit(car)"> Edit </Button>
         </StyledTableData>
         <StyledTableData>
           <Button variant="danger" icon="delete" @click="deleteCar(car.id)"> Delete </Button>

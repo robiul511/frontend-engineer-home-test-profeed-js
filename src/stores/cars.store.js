@@ -10,10 +10,7 @@ export const useCarsStore = defineStore('cars', () => {
     {
       id: 1,
       name: 'kijang inova',
-      brand: {
-        id: 1,
-        name: 'toyota'
-      },
+      brand: 1,
       machineCapacity: '1200',
       note: 'asu',
       year: '2024'
@@ -26,16 +23,12 @@ export const useCarsStore = defineStore('cars', () => {
     set(dataCars, result)
   }
 
-  const editCar = (_cars, id) => {
-    console.log(id);
-    
-    const result = get(dataCars)
-    result.push(_cars)
-    set(dataCars, result)
+  const editCar = (_car, id) => {
+    const findIndex = dataCars.value.findIndex(car => car.id == id) 
+    dataCars.value[findIndex] = _car
   }
 
   const deleteCar = (id) => {
-    console.log(id);
     const __cars = get(dataCars)
     const filter = __cars.filter(e => e.id !== id)
     set(dataCars, filter)

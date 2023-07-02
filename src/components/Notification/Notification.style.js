@@ -6,6 +6,7 @@ const notificationProps = {
 
 export const StyledNotification = styled('div', notificationProps)`
   background-color: #${props => props.color === 'danger' ? 'EF4444': '10B981'}; 
+  border-radius: 5px;
   padding: 0.5rem;
   font-size: 1rem;
   font-family: arial;

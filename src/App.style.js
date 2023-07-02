@@ -52,6 +52,7 @@ const StyledTabItem = styled('div', tabItemProps)`
 `
 
 const StyledForm = styled.div`
+  font-family: arial;
   display: flex;
   flex-direction: column;
   max-width: 320px;
