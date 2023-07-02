@@ -30,6 +30,15 @@ export const useBrandsStore = defineStore('brands', () => {
     set(dataBrands, filter)
   }
 
+  // getters
+  const getBrandName = (id) => {
+    const find = dataBrands.value.find(brand => brand.id == id)
+    if(find) {
+      return find.name
+    }
+    return '-'
+  } 
+
 
   return {
     // state
@@ -38,6 +47,9 @@ export const useBrandsStore = defineStore('brands', () => {
     // function
     addBrand,
     editBrand,
-    deleteBrand
+    deleteBrand,
+
+    // getters
+    getBrandName,
   }
 })

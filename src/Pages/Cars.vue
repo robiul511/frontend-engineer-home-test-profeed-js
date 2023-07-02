@@ -132,7 +132,7 @@ const save = () => {
       if (!hasSameId) {
         carStores.addCar(data)
         onFormClose()
-        
+
       } else {
         notification.isOpen = true
         notification.message = 'id must be unique'
@@ -143,7 +143,6 @@ const save = () => {
     }
   }
 }
-
 const deleteCar = (_id) => {
   carStores.deleteCar(_id)
 }
@@ -207,7 +206,7 @@ const deleteCar = (_id) => {
       <tr v-for="car in carStores.dataCars">
         <StyledTableData>{{ car.id }}</StyledTableData>
         <StyledTableData>{{ car.name }}</StyledTableData>
-        <StyledTableData>{{ car.brand}}</StyledTableData>
+        <StyledTableData>{{ brandStores.getBrandName(car.brand)}}</StyledTableData>
         <StyledTableData>{{ car.year }}</StyledTableData>
         <StyledTableData> {{ car.machineCapacity }} </StyledTableData>
         <StyledTableData>{{ car.note }}</StyledTableData>

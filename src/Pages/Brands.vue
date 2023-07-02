@@ -16,11 +16,14 @@ import {
   StyledButtonForm,
 } from '../App.style'
 
-import { useBrandsStore } from '../stores/brands.store'
 import { reactive, ref } from 'vue';
 import { get, set } from '@vueuse/core';
 
+import { useCarsStore } from '../stores/cars.store'
+import { useBrandsStore } from '../stores/brands.store'
+
 const brandStores = useBrandsStore()
+const carStores = useCarsStore()
 
 const notification = reactive({
   isOpen: false,
@@ -70,6 +73,12 @@ const validation = () => {
   return true
 }
 
+const isRelatedToCar = (id) => {
+  const __cars = get(carStores.dataCars)
+  const some = __cars.some(car => car.brand == id)
+  return some
+}
+
 const save = () => {
   if (validation()) {
     const { data, idSelected } = form    
@@ -77,20 +86,27 @@ const save = () => {
     const dataBrandsStore = get(brandStores.dataBrands)
 
     if (idSelected) {
-      const filter = dataBrandsStore.filter(brand => brand.id !== idSelected)
-      const hasSameId = filter.some(e => Number(e.id) === Number(data.id))
-      
-      if (!hasSameId) {
-        brandStores.editBrand(data, idSelected)
-        onFormClose()
+      if (!isRelatedToCar(idSelected) || data.id == idSelected) {
+        const filter = dataBrandsStore.filter(brand => brand.id !== idSelected)
+        const hasSameId = filter.some(e => Number(e.id) === Number(data.id))
+        
+        if (!hasSameId) {
+          brandStores.editBrand(data, idSelected)
+          onFormClose()
+        } else {
+          notification.isOpen = true
+          notification.message = 'id must be unique'
+          setTimeout(() => {
+            notification.isOpen = false
+          }, 3000)
+        }
       } else {
         notification.isOpen = true
-        notification.message = 'id must be unique'
+        notification.message = 'Id Cannot Be change, Because it used in Car page'
         setTimeout(() => {
           notification.isOpen = false
         }, 3000)
       }
-
     } else {
       const hasSameId = dataBrandsStore.some(e => Number(e.id) === Number(data.id))
       if (!hasSameId) {
@@ -119,7 +135,15 @@ const onClickEdit = (data) => {
   set(isOpenForm, true)
 }
 const deleteBrand = (_id) => {
-  brandStores.deleteBrand(_id)
+  if (!isRelatedToCar(_id)) {
+    brandStores.deleteBrand(_id)
+  } else {
+    notification.isOpen = true
+    notification.message = 'Id Cannot Be change, Because it used in Car page'
+    setTimeout(() => {
+      notification.isOpen = false
+    }, 3000)
+  }
 }
 </script>
 
